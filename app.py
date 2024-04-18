@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import matplotlib.pyplot as plt
 
 
 df = pd.read_csv('vehicles_us.csv')
@@ -18,16 +17,6 @@ st.dataframe(df)
 st.header('Vehicle types by manufacturer')
 st.write(px.histogram(df, x='manufacturer', color='type'))
 st.header('Histogram of `condition` vs `model_year`')
-
-# -------------------------------------------------------
-# histograms in plotly:
-# fig = go.Figure()
-# fig.add_trace(go.Histogram(x=df[df['condition']=='good']['model_year'], name='good'))
-# fig.add_trace(go.Histogram(x=df[df['condition']=='excellent']['model_year'], name='excellent'))
-# fig.update_layout(barmode='stack')
-# st.write(fig)
-# works, but too many lines of code
-# -------------------------------------------------------
 
 # histograms in plotly_express:
 st.write(px.histogram(df, x='model_year', color='condition'))
