@@ -63,18 +63,18 @@ honda_data = df[df['manufacturer'] == 'honda']
 toyota_data = df[df['manufacturer'] == 'toyota']
 
 # Calculate average price for each model year
-honda_avg_price = honda_data.groupby('model_year')['price'].mean()
-toyota_avg_price = toyota_data.groupby('model_year')['price'].mean()
+honda_avg_price = honda_data.groupby(
+    'model_year')['price'].mean().reset_index()
+toyota_avg_price = toyota_data.groupby(
+    'model_year')['price'].mean().reset_index()
 
-# Plot
+# Creating plot comparing average price of Hondas and Toyotas by model year
 st.header('Average Price of Honda and Toyota Vehicles Over the Years')
-fig = px.line()
-fig.add_scatter(x=honda_avg_price['model_year'],
-                y=honda_avg_price['price'], mode='markers+lines', name='Honda')
+fig = px.line(honda_avg_price, x='model_year', y='price',
+              title='Average Price of Honda Vehicles Over the Years')
 fig.add_scatter(x=toyota_avg_price['model_year'],
-                y=toyota_avg_price['price'], mode='markers+lines', name='Toyota')
-fig.update_layout(xaxis_title='Model Year', yaxis_title='Average Price',
-                  title='Average Price of Honda and Toyota Vehicles Over the Years')
+                y=toyota_avg_price['price'], mode='lines', name='Toyota')
+fig.update_layout(xaxis_title='Model Year', yaxis_title='Average Price')
 st.plotly_chart(fig)
 
 # Calculate number of days listed for each model year
@@ -83,15 +83,14 @@ honda_days_listed = honda_data.groupby(
 toyota_days_listed = toyota_data.groupby(
     'model_year')['days_listed'].mean().reset_index()
 
-# Plot
+# Creating plot for number of days listed for sale of Hondas and Toyotas by model year
 st.title('Average Number of Days Listed for Honda vs Toyota Vehicles by Model Year')
-fig = px.scatter()
-fig.add_scatter(x=honda_days_listed['model_year'], y=honda_days_listed['days_listed'],
-                mode='markers', name='Honda', marker_color='blue')
-fig.add_scatter(x=toyota_days_listed['model_year'], y=toyota_days_listed['days_listed'],
-                mode='markers', name='Toyota', marker_color='red')
-fig.update_layout(xaxis_title='Model Year', yaxis_title='Average Number of Days Listed',
-                  title='Average Number of Days Listed for Honda vs Toyota Vehicles by Model Year')
+fig = px.scatter(honda_days_listed, x='model_year', y='days_listed',
+                 title='Average Number of Days Listed for Honda Vehicles by Model Year')
+fig.add_scatter(x=toyota_days_listed['model_year'],
+                y=toyota_days_listed['days_listed'], mode='markers', name='Toyota')
+fig.update_layout(xaxis_title='Model Year',
+                  yaxis_title='Average Number of Days Listed')
 st.plotly_chart(fig)
 
 # Filter out rows with NaN values in the 'odometer' column for Honda and Toyota data
@@ -99,23 +98,20 @@ honda_data_filtered = honda_data.dropna(subset=['odometer'])
 toyota_data_filtered = toyota_data.dropna(subset=['odometer'])
 
 # Calculate average odometer reading for each model year for Honda and Toyota
-honda_avg_odometer = honda_data_filtered.groupby('model_year')[
-    'odometer'].mean()
-toyota_avg_odometer = toyota_data_filtered.groupby('model_year')[
-    'odometer'].mean()
+honda_avg_odometer = honda_data_filtered.groupby(
+    'model_year')['odometer'].mean().reset_index()
+toyota_avg_odometer = toyota_data_filtered.groupby(
+    'model_year')['odometer'].mean().reset_index()
 
 # Create a DataFrame to hold the combined data
-combined_data = pd.DataFrame({'Model Year': honda_avg_odometer.index,
-                              'Honda Odometer': honda_avg_odometer.values,
-                              'Toyota Odometer': toyota_avg_odometer.values})
+combined_data = pd.merge(honda_avg_odometer, toyota_avg_odometer,
+                         on='model_year', suffixes=('_honda', '_toyota'))
 
-# Plot the combined data
+# Creating plot comparing odometer by model year of Hondas and Toyotas
 st.title('Average Odometer Reading by Model Year for Honda and Toyota')
-fig = px.bar(combined_data, x='Model Year', y=['Honda Odometer', 'Toyota Odometer'],
+fig = px.bar(combined_data, x='model_year', y=['odometer_honda', 'odometer_toyota'],
              title='Average Odometer Reading by Model Year for Honda and Toyota',
-             labels={'Model Year': 'Model Year',
+             labels={'model_year': 'Model Year',
                      'value': 'Average Odometer', 'variable': 'Manufacturer'},
              barmode='group', width=800, height=500)
 st.plotly_chart(fig)
-
-print('done')
