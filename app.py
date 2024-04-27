@@ -5,6 +5,14 @@ import plotly.graph_objects as go
 
 
 df = pd.read_csv('vehicles_us.csv')
+
+# Cleaning up data a bit
+# Fill missing values in is_4wd with 'Unknown'
+df['is_4wd'] = df['is_4wd'].fillna('Unknown')
+
+# Convert is_4wd to boolean type
+df['is_4wd'] = df['is_4wd'].map({'yes': True, 'no': False, 'Unknown': False})
+
 df['manufacturer'] = df['model'].apply(lambda x: x.split()[0])
 
 st.header('Data viewer')
