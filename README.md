@@ -7,3 +7,5 @@ To run this program, checkout this repository on your local computer and run the
 streamlit run app.py
 
 When you do this, you'll be able to see the plots that are created from this analysis at the link provided. 
+
+You can also view the plots on Render at the following link: https://sdtproject-8oti.onrender.com/ 
